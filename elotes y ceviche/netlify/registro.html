@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cliente - Elotes y Ceviche</title>
+    <style>
+        :root {
+            --azul-oscuro: #1e3a8a;
+            --azul-medio: #3b82f6;
+            --azul-claro: #dbeafe;
+            --blanco: #ffffff;
+            --amarillo: #fbbf24;
+            --gris: #f3f4f6;
+            --gris-oscuro: #6b7280;
+            --verde: #10b981;
+            --rojo: #dc2626;
+            --naranja: #f97316;
+            --morado: #8b5cf6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gris);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--blanco);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+            color: var(--blanco);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--azul-medio);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .btn:disabled {
+            background-color: var(--gris);
+            color: var(--gris-oscuro);
+            cursor: not-allowed;
+        }
+        
+        .qr-container {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed var(--azul-claro);
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .qr-code {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        
+        .download-btn {
+            background-color: var(--verde);
+            color: white;
+            margin-top: 15px;
+        }
+        
+        .download-btn:hover {
+            background-color: #059669;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--azul-medio);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background-color: var(--rojo);
+        }
+        
+        .notification.success {
+            background-color: var(--verde);
+        }
+        
+        .instructions {
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .instructions h3 {
+            color: var(--azul-oscuro);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid var(--azul-claro);
+            border-left: 4px solid var(--azul-medio);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #qrImage {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Elotes y Ceviche</h1>
+            <p class="subtitle">Registro de Cliente</p>
+        </header>
+        
+        <form id="clientForm">
+            <div class="form-group">
+                <label for="name">Nombre completo *</label>
+                <input type="text" id="name" required placeholder="Ingresa tu nombre completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Teléfono *</label>
+                <input type="tel" id="phone" required placeholder="Ingresa tu número de teléfono">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Correo electrónico *</label>
+                <input type="email" id="email" required placeholder="Ingresa tu correo electrónico">
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">Registrar y Generar Código QR</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generando código QR...</p>
+            </div>
+        </form>
+        
+        <div class="qr-container" id="qrContainer">
+            <h2>¡Registro Exitoso!</h2>
+            <p>Tu código QR personal ha sido generado. Guárdalo para acumular puntos en tus compras.</p>
+            <div class="qr-code" id="qrCode">
+                <img id="qrImage" alt="Código QR del cliente">
+            </div>
+            <button class="btn download-btn" id="downloadBtn">Descargar Código QR</button>
+            
+            <div class="instructions">
+                <h3>¿Cómo usar tu código QR?</h3>
+                <ul>
+                    <li>Guarda este código QR en tu teléfono</li>
+                    <li>Muéstralo al realizar tus compras en Elotes y Ceviche</li>
+                    <li>Acumularás el 5% de tus compras en puntos</li>
+                    <li>Podrás canjear tus puntos por descuentos en futuras compras</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <!-- Incluir la biblioteca QRCode.js CORREGIDA -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        // Elementos DOM
+        const clientForm = document.getElementById('clientForm');
+        const qrContainer = document.getElementById('qrContainer');
+        const qrCodeEl = document.getElementById('qrCode');
+        const qrImage = document.getElementById('qrImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const notificationEl = document.getElementById('notification');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingEl = document.getElementById('loading');
+        
+        let qrCodeInstance = null;
+        
+        // Generar ID único para el cliente
+        function generateClientId() {
+            return 'CLI_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Validar formulario
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!name) {
+                showNotification('Por favor ingresa tu nombre completo', 'error');
+                return false;
+            }
+            
+            if (!phone) {
+                showNotification('Por favor ingresa tu número de teléfono', 'error');
+                return false;
+            }
+            
+            if (!email) {
+                showNotification('Por favor ingresa tu correo electrónico', 'error');
+                return false;
+            }
+            
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Por favor ingresa un correo electrónico válido', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Verificar si el cliente ya existe
+        function clientExists(phone, email) {
+            const clients = JSON.parse(localStorage.getItem('elotesCevicheClients')) || {};
+            
+            for (const clientId in clients) {
+                const client = clients[clientId];
+                if (client.phone === phone || client.email === email) {
+                    return client;
+                }
+            }
+            
+            return null;
+        }
+        
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            notificationEl.textContent = message;
+            notificationEl.className = 'notification';
+            notificationEl.classList.add(type, 'show');
+            
+            setTimeout(() => {
+                notificationEl.classList.remove('show');
+            }, 4000);
+        }
+        
+        // Generar código QR - MÉTODO CORREGIDO
+        function generateQRCode(data) {
+            return new Promise((resolve, reject) => {
+                try {
+                    // Limpiar contenedor
+                    qrCodeEl.innerHTML = '';
+                    
+                    // Crear un nuevo div para el QR
+                    const qrDiv = document.createElement('div');
+                    qrDiv.id = 'qrCodeContainer';
+                    qrCodeEl.appendChild(qrDiv);
+                    
+                    // Generar QR usando la biblioteca correctamente
+                    qrCodeInstance = new QRCode(qrDiv, {
+                        text: data,
+                        width: 200,
+                        height: 200,
+                        colorDark: '#1e3a8a',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    
+                    // Esperar a que se genere el QR
+                    setTimeout(() => {
+                        const canvas = qrDiv.querySelector('canvas');
+                        if (canvas) {
+                            // Convertir canvas a imagen para mejor compatibilidad
+                            const dataURL = canvas.toDataURL('image/png');
+                            qrImage.src = dataURL;
+                            qrImage.style.display = 'block';
+                            resolve(dataURL);
+                        } else {
+                            reject(new Error('No se pudo generar el código QR'));
+                        }
+                    }, 100);
+                    
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+        
+        // Descargar código QR
+        function downloadQRCode() {
+            if (!qrImage.src || qrImage.src === '') {
+                showNotification('Primero genera un código QR', 'error');
+                return;
+            }
+            
+            try {
+                const link = document.createElement('a');
+                link.download = `codigo_qr_${document.getElementById('name').value || 'cliente'}.png`;
+                link.href = qrImage.src;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showNotification('Código QR descargado correctamente');
+            } catch (error) {
+                console.error('Error al descargar QR:', error);
+                showNotification('Error al descargar el código QR', 'error');
+            }
+        }
+        
+        // Manejar envío del formulario
+        clientForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validar formulario
+            if (!validateForm()) {
+                return;
+            }
+            
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            // Verificar si el cliente ya existe
+            const existingClient = clientExists(phone, email);
+            if (existingClient) {
+                const useExisting = confirm(`Ya existe un cliente registrado con estos datos. ¿Deseas generar un nuevo código QR para ${existingClient.name}?`);
+                
+                if (useExisting) {
+                    // Usar cliente existente
+                    const qrData = JSON.stringify({
+                        id: existingClient.id,
+                        name: existingClient.name,
+                        phone: existingClient.phone
+                    });
+                    
+                    // Mostrar loading
+                    submitBtn.disabled = true;
+                    loadingEl.style.display = 'block';
+                    
+                    try {
+                        await generateQRCode(qrData);
+                        qrContainer.style.display = 'block';
+                        loadingEl.style.display = 'none';
+                        submitBtn.disabled = false;
+                        
+                        // Desplazar hacia el código QR
+                        qrContainer.scrollIntoView({ behavior: 'smooth' });
+                        
+                        showNotification('Código QR regenerado para cliente existente');
+                    } catch (error) {
+                        console.error('Error al generar QR:', error);
+                        showNotification('Error al generar el código QR', 'error');
+                        loadingEl.style.display = 'none';
+                        submitBtn.disabled = false;
+                    }
+                }
+                return;
+            }
+            
+            // Crear nuevo cliente
+            const clientId = generateClientId();
+            const clientData = {
+                id: clientId,
+                name: name,
+                phone: phone,
+                email: email,
+                points: 0,
+                registrationDate: new Date().toISOString(),
+                totalSpent: 0
+            };
+            
+            // Guardar en localStorage
+            const clients = JSON.parse(localStorage.getItem('elotesCevicheClients')) || {};
+            clients[clientId] = clientData;
+            localStorage.setItem('elotesCevicheClients', JSON.stringify(clients));
+            
+            // Generar código QR con los datos del cliente
+            const qrData = JSON.stringify({
+                id: clientId,
+                name: name,
+                phone: phone
+            });
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            loadingEl.style.display = 'block';
+            
+            try {
+                await generateQRCode(qrData);
+                qrContainer.style.display = 'block';
+                loadingEl.style.display = 'none';
+                submitBtn.disabled = false;
+                
+                // Desplazar hacia el código QR
+                qrContainer.scrollIntoView({ behavior: 'smooth' });
+                
+                showNotification('¡Cliente registrado exitosamente!');
+                
+                // Limpiar formulario
+                clientForm.reset();
+                
+            } catch (error) {
+                console.error('Error al generar QR:', error);
+                showNotification('Error al generar el código QR: ' + error.message, 'error');
+                loadingEl.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Evento para descargar QR
+        downloadBtn.addEventListener('click', downloadQRCode);
+        
+        // Mejorar la experiencia del formulario
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.style.borderColor = '#10b981';
+                } else {
+                    this.style.borderColor = '#ddd';
+                }
+            });
+        });
+        
+        // Inicializar ocultando la imagen del QR
+        qrImage.style.display = 'none';
+    </script>
+</body>
+</html>
