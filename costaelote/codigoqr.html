@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador QR - Elotes y Ceviche</title>
+    <style>
+        :root {
+            --azul-oscuro: #1e3a8a;
+            --azul-medio: #3b82f6;
+            --azul-claro: #dbeafe;
+            --blanco: #ffffff;
+            --amarillo: #fbbf24;
+            --gris: #f3f4f6;
+            --gris-oscuro: #6b7280;
+            --verde: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gris);
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: var(--blanco);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+            color: var(--blanco);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .instructions {
+            margin-bottom: 25px;
+            text-align: left;
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .instructions h3 {
+            color: var(--azul-oscuro);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .qr-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--blanco);
+            border-radius: 8px;
+            border: 2px dashed var(--azul-claro);
+        }
+        
+        #qrCode {
+            margin: 0 auto;
+            max-width: 250px;
+        }
+        
+        .url-display {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: var(--gris);
+            border-radius: 5px;
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .download-btn {
+            background-color: var(--verde);
+            color: white;
+        }
+        
+        .download-btn:hover {
+            background-color: #059669;
+        }
+        
+        .print-btn {
+            background-color: var(--azul-medio);
+            color: white;
+        }
+        
+        .print-btn:hover {
+            background-color: var(--azul-oscuro);
+        }
+        
+        .new-url-btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+        }
+        
+        .new-url-btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .url-form {
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--azul-oscuro);
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .generate-btn {
+            background-color: var(--azul-medio);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .generate-btn:hover {
+            background-color: var(--azul-oscuro);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gris-oscuro);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--gris);
+        }
+        
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Elotes y Ceviche</h1>
+            <p class="subtitle">Generador de Código QR para Registro</p>
+        </header>
+        
+        <div class="content">
+            <div class="instructions">
+                <h3>Instrucciones de Uso:</h3>
+                <ol>
+                    <li>Pega la URL de tu página de registro en el campo de abajo</li>
+                    <li>Haz clic en "Generar Código QR"</li>
+                    <li>Descarga o imprime el código QR generado</li>
+                    <li>Coloca el código QR en tu establecimiento para que los clientes puedan registrarse</li>
+                </ol>
+            </div>
+            
+            <div class="url-form">
+                <div class="form-group">
+                    <label for="urlInput">URL de la Página de Registro:</label>
+                    <input type="url" id="urlInput" placeholder="https://tudominio.com/registro.html" value="https://tudominio.com/registro.html">
+                </div>
+                <button class="generate-btn" id="generateBtn">Generar Código QR</button>
+            </div>
+            
+            <div class="qr-container" id="qrContainer" style="display: none;">
+                <h3>Código QR Generado</h3>
+                <div id="qrCode"></div>
+                <div class="url-display" id="urlDisplay"></div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn download-btn" id="downloadQR">Descargar QR</button>
+                    <button class="action-btn print-btn" id="printQR">Imprimir QR</button>
+                    <button class="action-btn new-url-btn" id="newQR">Generar Nuevo QR</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Elotes y Ceviche - Generador de Códigos QR</p>
+        </footer>
+    </div>
+
+    <!-- Incluir la biblioteca QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const downloadQRBtn = document.getElementById('downloadQR');
+            const printQRBtn = document.getElementById('printQR');
+            const newQRBtn = document.getElementById('newQR');
+            const urlInput = document.getElementById('urlInput');
+            const qrContainer = document.getElementById('qrContainer');
+            const qrCode = document.getElementById('qrCode');
+            const urlDisplay = document.getElementById('urlDisplay');
+            
+            let currentQRCode = null;
+            
+            // Generar QR por defecto al cargar la página
+            generateQRCode();
+            
+            generateBtn.addEventListener('click', generateQRCode);
+            
+            downloadQRBtn.addEventListener('click', function() {
+                if (!currentQRCode) return;
+                
+                const canvas = document.querySelector('#qrCode canvas');
+                if (canvas) {
+                    const link = document.createElement('a');
+                    link.download = 'qr-registro-clientes.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }
+            });
+            
+            printQRBtn.addEventListener('click', function() {
+                window.print();
+            });
+            
+            newQRBtn.addEventListener('click', function() {
+                urlInput.value = '';
+                urlInput.focus();
+                qrContainer.style.display = 'none';
+            });
+            
+            function generateQRCode() {
+                let url = urlInput.value.trim();
+                
+                // Validar URL
+                if (!url) {
+                    alert('Por favor, ingresa una URL válida');
+                    return;
+                }
+                
+                // Asegurarse de que la URL tenga el protocolo
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                    urlInput.value = url;
+                }
+                
+                // Limpiar QR anterior
+                qrCode.innerHTML = '';
+                
+                // Generar nuevo QR
+                currentQRCode = new QRCode(qrCode, {
+                    text: url,
+                    width: 250,
+                    height: 250,
+                    colorDark: '#1e3a8a',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                
+                // Mostrar información
+                urlDisplay.textContent = url;
+                qrContainer.style.display = 'block';
+                
+                // Desplazarse hacia el QR generado
+                qrContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elotes y Ceviche - Sistema de Ventas</title>
+    <style>
+        :root {
+            --azul-oscuro: #1e3a8a;
+            --azul-medio: #3b82f6;
+            --azul-claro: #dbeafe;
+            --blanco: #ffffff;
+            --amarillo: #fbbf24;
+            --gris: #f3f4f6;
+            --gris-oscuro: #6b7280;
+            --verde: #10b981;
+            --rojo: #dc2626;
+            --naranja: #f97316;
+            --morado: #8b5cf6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gris);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+            color: var(--blanco);
+            padding: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .products-section {
+            background-color: var(--blanco);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            color: var(--azul-oscuro);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--azul-claro);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .product-card {
+            background-color: var(--azul-claro);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--amarillo);
+        }
+        
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--azul-oscuro);
+        }
+        
+        .product-price {
+            color: var(--azul-medio);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .add-btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .add-btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .order-section {
+            background-color: var(--blanco);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .order-items {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid var(--gris);
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gris);
+        }
+        
+        .item-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .item-name {
+            font-weight: bold;
+        }
+        
+        .item-price {
+            color: var(--gris-oscuro);
+            font-size: 0.9rem;
+        }
+        
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            background-color: var(--azul-claro);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+        }
+        
+        .remove-btn {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .total-section {
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+            text-align: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .complete-btn {
+            background-color: var(--azul-medio);
+            color: white;
+        }
+        
+        .complete-btn:hover {
+            background-color: var(--azul-oscuro);
+        }
+        
+        .clear-btn {
+            background-color: var(--gris);
+            color: var(--gris-oscuro);
+        }
+        
+        .clear-btn:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .sales-section {
+            background-color: var(--blanco);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+        }
+        
+        .sales-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .sales-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .daily-sales-btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+        }
+        
+        .daily-sales-btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .reset-sales-btn {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .reset-sales-btn:hover {
+            background-color: #fecaca;
+        }
+        
+        .download-pdf-btn {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .download-pdf-btn:hover {
+            background-color: #059669;
+        }
+        
+        .sales-summary {
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .sales-table th, .sales-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--gris);
+        }
+        
+        .sales-table th {
+            background-color: var(--azul-medio);
+            color: white;
+        }
+        
+        .daily-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+            text-align: right;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--gris-oscuro);
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--azul-medio);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .empty-order {
+            text-align: center;
+            color: var(--gris-oscuro);
+            font-style: italic;
+        }
+
+        /* Nuevos estilos para el sistema de clientes */
+        .client-section {
+            background-color: var(--blanco);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .client-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .client-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .scan-qr-btn {
+            background-color: var(--morado);
+            color: white;
+        }
+        
+        .scan-qr-btn:hover {
+            background-color: #7c3aed;
+        }
+        
+        .manage-clients-btn {
+            background-color: var(--naranja);
+            color: white;
+        }
+        
+        .manage-clients-btn:hover {
+            background-color: #ea580c;
+        }
+        
+        .register-client-btn {
+            background-color: var(--verde);
+            color: white;
+        }
+        
+        .register-client-btn:hover {
+            background-color: #059669;
+        }
+        
+        .client-info {
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .client-details {
+            margin-bottom: 15px;
+        }
+        
+        .client-points {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+        }
+        
+        .points-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .use-points-btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .use-points-btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .clear-client-btn {
+            background-color: var(--gris);
+            color: var(--gris-oscuro);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .clear-client-btn:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .scanner-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .scanner-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        #qrScanner {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            margin: 20px auto;
+            border: 2px solid var(--azul-medio);
+            border-radius: 5px;
+            background-color: #000;
+        }
+        
+        .close-scanner {
+            background-color: var(--rojo);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        .clients-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .clients-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .clients-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .clients-table th, .clients-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--gris);
+        }
+        
+        .clients-table th {
+            background-color: var(--azul-medio);
+            color: white;
+        }
+        
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .edit-btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            margin-right: 5px;
+        }
+        
+        .delete-btn {
+            background-color: var(--rojo);
+            color: white;
+        }
+        
+        .edit-form {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--azul-claro);
+            border-radius: 5px;
+        }
+        
+        .discount-section {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .discount-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--verde);
+            text-align: center;
+        }
+        
+        .phone-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .phone-search input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .phone-search-btn {
+            background-color: var(--azul-medio);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .notification.error {
+            background-color: var(--rojo);
+        }
+        
+        .notification.success {
+            background-color: var(--verde);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        
+        .spinner {
+            border: 4px solid var(--azul-claro);
+            border-left: 4px solid var(--azul-medio);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Elotes y Ceviche</h1>
+            <p class="subtitle">Sistema de registro de pedidos y ventas</p>
+        </header>
+        
+        <!-- Sección de Clientes -->
+        <div class="client-section">
+            <h2 class="section-title">Sistema de Clientes</h2>
+            
+            <div class="client-controls">
+                <button class="client-btn scan-qr-btn" id="scanQRBtn">Escanear Código QR</button>
+                <button class="client-btn manage-clients-btn" id="manageClientsBtn">Gestionar Clientes</button>
+                <a href="registro.html" class="client-btn register-client-btn">Registrar Nuevo Cliente</a>
+            </div>
+            
+            <div class="phone-search">
+                <input type="tel" id="phoneSearch" placeholder="Buscar cliente por teléfono">
+                <button class="phone-search-btn" id="phoneSearchBtn">Buscar</button>
+            </div>
+
+            <div class="loading" id="clientLoading">
+                <div class="spinner"></div>
+                <p>Buscando cliente...</p>
+            </div>
+            
+            <div class="client-info" id="clientInfo">
+                <div class="client-details">
+                    <h3 id="clientName"></h3>
+                    <p id="clientPhone"></p>
+                    <p id="clientEmail"></p>
+                </div>
+                <div class="client-points" id="clientPoints"></div>
+                <div class="points-controls">
+                    <button class="use-points-btn" id="usePointsBtn">Usar Puntos</button>
+                    <button class="clear-client-btn" id="clearClientBtn">Limpiar Cliente</button>
+                </div>
+            </div>
+            
+            <div class="discount-section" id="discountSection">
+                <div class="discount-amount" id="discountAmount"></div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="products-section">
+                <h2 class="section-title">Productos Disponibles</h2>
+                
+                <h3>Elotes en Vaso</h3>
+                <div class="products-grid">
+                    <div class="product-card" data-id="1" data-name="Elote en Vaso (Chico)" data-price="40">
+                        <div class="product-name">Elote en Vaso (Chico)</div>
+                        <div class="product-price">$40.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <div class="product-card" data-id="2" data-name="Elote en Vaso (Mediano)" data-price="55">
+                        <div class="product-name">Elote en Vaso (Mediano)</div>
+                        <div class="product-price">$55.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <div class="product-card" data-id="3" data-name="Elote en Vaso (Grande)" data-price="70">
+                        <div class="product-name">Elote en Vaso (Grande)</div>
+                        <div class="product-price">$70.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <!-- Nuevo producto: Tostitos con Elote -->
+                    <div class="product-card" data-id="10" data-name="Tostitos con Elote" data-price="80">
+                        <div class="product-name">Tostitos con Elote</div>
+                        <div class="product-price">$80.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                </div>
+                
+                <h3>Elotes Enteros</h3>
+                <div class="products-grid">
+                    <div class="product-card" data-id="4" data-name="Elote Asado" data-price="45">
+                        <div class="product-name">Elote Asado</div>
+                        <div class="product-price">$45.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <div class="product-card" data-id="5" data-name="Elote Cocido" data-price="45">
+                        <div class="product-name">Elote Cocido</div>
+                        <div class="product-price">$45.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                </div>
+                
+                <h3>Refrescos</h3>
+                <div class="products-grid">
+                    <div class="product-card" data-id="11" data-name="Refresco" data-price="25">
+                        <div class="product-name">Refresco</div>
+                        <div class="product-price">$25.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                </div>
+                
+                <h3>Ceviche</h3>
+                <div class="products-grid">
+                    <div class="product-card" data-id="6" data-name="Tostada de Ceviche" data-price="40">
+                        <div class="product-name">Tostada de Ceviche</div>
+                        <div class="product-price">$40.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <div class="product-card" data-id="7" data-name="Tostitos con Ceviche" data-price="120">
+                        <div class="product-name">Tostitos con Ceviche</div>
+                        <div class="product-price">$120.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <div class="product-card" data-id="8" data-name="Medio Litro de Ceviche" data-price="120">
+                        <div class="product-name">Medio Litro de Ceviche</div>
+                        <div class="product-price">$120.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                    <div class="product-card" data-id="9" data-name="Litro de Ceviche" data-price="220">
+                        <div class="product-name">Litro de Ceviche</div>
+                        <div class="product-price">$220.00</div>
+                        <button class="add-btn">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-section">
+                <h2 class="section-title">Pedido Actual</h2>
+                
+                <div class="order-items" id="orderItems">
+                    <!-- Los elementos del pedido se agregarán aquí dinámicamente -->
+                    <p class="empty-order">No hay productos en el pedido</p>
+                </div>
+                
+                <div class="total-section">
+                    <div class="total-amount" id="totalAmount">Total: $0.00</div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn clear-btn" id="clearOrder">Limpiar Pedido</button>
+                    <button class="action-btn complete-btn" id="completeOrder">Completar Venta</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sales-section">
+            <h2 class="section-title">Corte de Ventas del Día</h2>
+            
+            <div class="sales-controls">
+                <button class="sales-btn daily-sales-btn" id="showDailySales">Mostrar Ventas del Día</button>
+                <button class="sales-btn reset-sales-btn" id="resetDailySales">Reiniciar Ventas del Día</button>
+                <!-- Nuevo botón para descargar PDF -->
+                <button class="sales-btn download-pdf-btn" id="downloadPDF">Descargar PDF</button>
+            </div>
+            
+            <div class="sales-summary" id="salesSummary">
+                <p>Haz clic en "Mostrar Ventas del Día" para ver el corte de ventas</p>
+            </div>
+        </div>
+        
+        <!-- Modal del escáner QR -->
+        <div class="scanner-modal" id="scannerModal">
+            <div class="scanner-container">
+                <h3>Escanear Código QR</h3>
+                <p>Apunta la cámara al código QR del cliente</p>
+                <video id="qrScanner"></video>
+                <button class="close-scanner" id="closeScanner">Cerrar Escáner</button>
+            </div>
+        </div>
+        
+        <!-- Modal de gestión de clientes -->
+        <div class="clients-modal" id="clientsModal">
+            <div class="clients-container">
+                <h3>Gestión de Clientes</h3>
+                <div class="loading" id="clientsLoading">
+                    <div class="spinner"></div>
+                    <p>Cargando clientes...</p>
+                </div>
+                <table class="clients-table" id="clientsTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Puntos</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <!-- Los clientes se cargarán aquí -->
+                    </tbody>
+                </table>
+                <button class="close-scanner" id="closeClientsModal" style="margin-top: 15px;">Cerrar</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Elotes y Ceviche - Sistema de Ventas</p>
+        </footer>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <!-- Incluir la biblioteca jsQR para escanear códigos QR -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <!-- Incluir la biblioteca jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let currentOrder = [];
+        let dailySales = JSON.parse(localStorage.getItem('dailySales')) || {
+            total: 0,
+            products: {}
+        };
+        let currentClient = null;
+        let pointsToUse = 0;
+        let scannerStream = null;
+        
+        // Elementos DOM
+        const orderItemsEl = document.getElementById('orderItems');
+        const totalAmountEl = document.getElementById('totalAmount');
+        const clearOrderBtn = document.getElementById('clearOrder');
+        const completeOrderBtn = document.getElementById('completeOrder');
+        const showDailySalesBtn = document.getElementById('showDailySales');
+        const resetDailySalesBtn = document.getElementById('resetDailySales');
+        const downloadPDFBtn = document.getElementById('downloadPDF');
+        const salesSummaryEl = document.getElementById('salesSummary');
+        const notificationEl = document.getElementById('notification');
+        
+        // Elementos del sistema de clientes
+        const scanQRBtn = document.getElementById('scanQRBtn');
+        const manageClientsBtn = document.getElementById('manageClientsBtn');
+        const clientInfoEl = document.getElementById('clientInfo');
+        const clientNameEl = document.getElementById('clientName');
+        const clientPhoneEl = document.getElementById('clientPhone');
+        const clientEmailEl = document.getElementById('clientEmail');
+        const clientPointsEl = document.getElementById('clientPoints');
+        const usePointsBtn = document.getElementById('usePointsBtn');
+        const clearClientBtn = document.getElementById('clearClientBtn');
+        const scannerModal = document.getElementById('scannerModal');
+        const qrScannerEl = document.getElementById('qrScanner');
+        const closeScannerBtn = document.getElementById('closeScanner');
+        const clientsModal = document.getElementById('clientsModal');
+        const clientsTableBody = document.getElementById('clientsTableBody');
+        const closeClientsModal = document.getElementById('closeClientsModal');
+        const discountSection = document.getElementById('discountSection');
+        const discountAmountEl = document.getElementById('discountAmount');
+        const phoneSearchEl = document.getElementById('phoneSearch');
+        const phoneSearchBtn = document.getElementById('phoneSearchBtn');
+        const clientLoadingEl = document.getElementById('clientLoading');
+        const clientsLoadingEl = document.getElementById('clientsLoading');
+        const clientsTableEl = document.getElementById('clientsTable');
+
+        // Función para llamar a Netlify Functions
+        async function callNetlifyFunction(functionName, data) {
+            try {
+                const response = await fetch(`/.netlify/functions/${functionName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error:', error);
+                throw new Error('Error de conexión con el servidor');
+            }
+        }
+
+        // Función para obtener todos los clientes
+        async function getAllClients() {
+            try {
+                const response = await fetch('/.netlify/functions/get-all-clients');
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error:', error);
+                throw new Error('Error al cargar clientes');
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar event listeners a los botones de productos
+            document.querySelectorAll('.add-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productCard = this.closest('.product-card');
+                    const productId = productCard.dataset.id;
+                    const productName = productCard.dataset.name;
+                    const productPrice = parseFloat(productCard.dataset.price);
+                    
+                    addToOrder(productId, productName, productPrice);
+                    showNotification(`${productName} agregado al pedido`);
+                });
+            });
+            
+            // Event listeners para los botones de acción
+            clearOrderBtn.addEventListener('click', clearOrder);
+            completeOrderBtn.addEventListener('click', completeOrder);
+            showDailySalesBtn.addEventListener('click', showDailySales);
+            resetDailySalesBtn.addEventListener('click', resetDailySales);
+            downloadPDFBtn.addEventListener('click', downloadPDF);
+            
+            // Event listeners para el sistema de clientes
+            scanQRBtn.addEventListener('click', openQRScanner);
+            manageClientsBtn.addEventListener('click', openClientsModal);
+            usePointsBtn.addEventListener('click', usePoints);
+            clearClientBtn.addEventListener('click', clearClient);
+            closeScannerBtn.addEventListener('click', closeQRScanner);
+            closeClientsModal.addEventListener('click', closeClientsModalFunc);
+            phoneSearchBtn.addEventListener('click', searchClientByPhone);
+            
+            // Permitir búsqueda con Enter
+            phoneSearchEl.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchClientByPhone();
+                }
+            });
+        });
+        
+        // Funciones para manejar el pedido actual
+        function addToOrder(id, name, price) {
+            // Verificar si el producto ya está en el pedido
+            const existingItem = currentOrder.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                currentOrder.push({
+                    id: id,
+                    name: name,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            updateOrderDisplay();
+        }
+        
+        function updateOrderDisplay() {
+            // Limpiar el contenedor de elementos del pedido
+            orderItemsEl.innerHTML = '';
+            
+            if (currentOrder.length === 0) {
+                orderItemsEl.innerHTML = '<p class="empty-order">No hay productos en el pedido</p>';
+                totalAmountEl.textContent = 'Total: $0.00';
+                discountSection.style.display = 'none';
+                return;
+            }
+            
+            // Calcular el total
+            let subtotal = 0;
+            
+            // Mostrar cada elemento del pedido
+            currentOrder.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const orderItemEl = document.createElement('div');
+                orderItemEl.className = 'order-item';
+                
+                orderItemEl.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">$${item.price.toFixed(2)} c/u</div>
+                    </div>
+                    <div class="item-controls">
+                        <button class="quantity-btn decrease-btn" data-id="${item.id}">-</button>
+                        <span class="item-quantity">${item.quantity}</span>
+                        <button class="quantity-btn increase-btn" data-id="${item.id}">+</button>
+                        <button class="remove-btn" data-id="${item.id}">Eliminar</button>
+                    </div>
+                `;
+                
+                orderItemsEl.appendChild(orderItemEl);
+            });
+            
+            // Calcular total con descuento
+            let total = subtotal - pointsToUse;
+            if (total < 0) total = 0;
+            
+            // Actualizar el total
+            if (pointsToUse > 0) {
+                totalAmountEl.innerHTML = `
+                    Subtotal: $${subtotal.toFixed(2)}<br>
+                    Descuento: -$${pointsToUse.toFixed(2)}<br>
+                    <strong>Total: $${total.toFixed(2)}</strong>
+                `;
+            } else {
+                totalAmountEl.textContent = `Total: $${total.toFixed(2)}`;
+            }
+            
+            // Agregar event listeners a los botones de cantidad y eliminar
+            document.querySelectorAll('.decrease-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    decreaseQuantity(id);
+                });
+            });
+            
+            document.querySelectorAll('.increase-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    increaseQuantity(id);
+                });
+            });
+            
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    removeFromOrder(id);
+                });
+            });
+        }
+        
+        function decreaseQuantity(id) {
+            const item = currentOrder.find(item => item.id === id);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
+                updateOrderDisplay();
+            }
+        }
+        
+        function increaseQuantity(id) {
+            const item = currentOrder.find(item => item.id === id);
+            if (item) {
+                item.quantity += 1;
+                updateOrderDisplay();
+            }
+        }
+        
+        function removeFromOrder(id) {
+            currentOrder = currentOrder.filter(item => item.id !== id);
+            updateOrderDisplay();
+        }
+        
+        function clearOrder() {
+            currentOrder = [];
+            updateOrderDisplay();
+            showNotification('Pedido limpiado');
+        }
+        
+        async function completeOrder() {
+            if (currentOrder.length === 0) {
+                showNotification('No hay productos en el pedido', 'error');
+                return;
+            }
+            
+            // Calcular el total del pedido
+            let subtotal = 0;
+            
+            subtotal = currentOrder.reduce((total, item) => {
+                return total + (item.price * item.quantity);
+            }, 0);
+            
+            let total = subtotal - pointsToUse;
+            if (total < 0) total = 0;
+            
+            // Calcular puntos a acumular (5% del subtotal)
+            const pointsEarned = Math.floor(subtotal * 0.05);
+            
+            // Actualizar las ventas diarias
+            dailySales.total += total;
+            
+            currentOrder.forEach(item => {
+                const productKey = `${item.id}`;
+                
+                if (dailySales.products[productKey]) {
+                    dailySales.products[productKey].quantity += item.quantity;
+                    dailySales.products[productKey].total += (item.price * item.quantity);
+                } else {
+                    dailySales.products[productKey] = {
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        total: item.price * item.quantity
+                    };
+                }
+            });
+            
+            // Guardar en localStorage
+            localStorage.setItem('dailySales', JSON.stringify(dailySales));
+            
+            // Si hay un cliente, actualizar sus puntos
+            if (currentClient) {
+                try {
+                    const newPoints = currentClient.points - pointsToUse + pointsEarned;
+                    const result = await callNetlifyFunction('update-client', {
+                        clientId: currentClient.id,
+                        updates: {
+                            points: newPoints,
+                            totalSpent: currentClient.totalSpent + total
+                        }
+                    });
+                    
+                    if (result.success) {
+                        // Actualizar cliente actual
+                        currentClient.points = newPoints;
+                        currentClient.totalSpent += total;
+                        clientPointsEl.textContent = `Puntos acumulados: ${newPoints}`;
+                        
+                        showNotification(`Venta completada: $${total.toFixed(2)}. Cliente acumuló ${pointsEarned} puntos`);
+                    }
+                } catch (error) {
+                    showNotification('Error al actualizar puntos del cliente', 'error');
+                }
+            } else {
+                showNotification(`Venta completada: $${total.toFixed(2)}`);
+            }
+            
+            // Limpiar el pedido actual
+            clearOrder();
+            pointsToUse = 0;
+            discountSection.style.display = 'none';
+        }
+        
+        // Funciones para el corte de ventas
+        function showDailySales() {
+            if (dailySales.total === 0) {
+                salesSummaryEl.innerHTML = '<p>No hay ventas registradas para el día de hoy</p>';
+                return;
+            }
+            
+            let html = `
+                <h3>Resumen de Ventas del Día</h3>
+                <table class="sales-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (const productKey in dailySales.products) {
+                const product = dailySales.products[productKey];
+                html += `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td>${product.quantity}</td>
+                        <td>$${product.total.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+            
+            html += `
+                    </tbody>
+                </table>
+                <div class="daily-total">Total del Día: $${dailySales.total.toFixed(2)}</div>
+            `;
+            
+            salesSummaryEl.innerHTML = html;
+        }
+        
+        function resetDailySales() {
+            if (confirm('¿Estás seguro de que deseas reiniciar las ventas del día? Esta acción no se puede deshacer.')) {
+                dailySales = {
+                    total: 0,
+                    products: {}
+                };
+                
+                localStorage.setItem('dailySales', JSON.stringify(dailySales));
+                salesSummaryEl.innerHTML = '<p>Ventas del día reiniciadas</p>';
+                showNotification('Ventas del día reiniciadas');
+            }
+        }
+        
+        // Función para descargar el reporte en PDF
+        function downloadPDF() {
+            if (dailySales.total === 0) {
+                showNotification('No hay ventas para descargar', 'error');
+                return;
+            }
+            
+            // Crear instancia de jsPDF
+            const jsPDF = window.jspdf.jsPDF;
+            const doc = new jsPDF();
+            
+            // Título
+            doc.setFontSize(20);
+            doc.text('Corte de Ventas del Día - Elotes y Ceviche', 15, 15);
+            
+            // Fecha
+            const today = new Date();
+            const dateString = today.toLocaleDateString('es-MX', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            doc.setFontSize(12);
+            doc.text(`Fecha: ${dateString}`, 15, 25);
+            
+            // Preparar datos para la tabla
+            const tableData = [];
+            for (const productKey in dailySales.products) {
+                const product = dailySales.products[productKey];
+                tableData.push([
+                    product.name,
+                    `$${product.price.toFixed(2)}`,
+                    product.quantity,
+                    `$${product.total.toFixed(2)}`
+                ]);
+            }
+            
+            // Agregar tabla
+            doc.autoTable({
+                startY: 35,
+                head: [['Producto', 'Precio Unitario', 'Cantidad', 'Total']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: {
+                    fillColor: [59, 130, 246],
+                    textColor: 255
+                },
+                styles: {
+                    fontSize: 10
+                }
+            });
+            
+            // Agregar total
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Total del Día: $${dailySales.total.toFixed(2)}`, 15, finalY);
+            
+            // Guardar PDF
+            doc.save(`corte_ventas_${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}.pdf`);
+            
+            showNotification('PDF descargado correctamente');
+        }
+        
+        // Funciones para el sistema de clientes
+        
+        function openQRScanner() {
+            scannerModal.style.display = 'flex';
+            
+            // Inicializar el escáner QR
+            const canvasElement = document.createElement('canvas');
+            const canvas = canvasElement.getContext('2d');
+            
+            // Usar la cámara del dispositivo
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(function(stream) {
+                    scannerStream = stream;
+                    qrScannerEl.srcObject = stream;
+                    qrScannerEl.setAttribute("playsinline", true);
+                    qrScannerEl.play();
+                    requestAnimationFrame(tick);
+                })
+                .catch(function(err) {
+                    console.error("Error al acceder a la cámara: ", err);
+                    showNotification('Error al acceder a la cámara. Asegúrate de permitir el acceso.', 'error');
+                });
+            
+            function tick() {
+                if (qrScannerEl.readyState === qrScannerEl.HAVE_ENOUGH_DATA) {
+                    canvasElement.height = qrScannerEl.videoHeight;
+                    canvasElement.width = qrScannerEl.videoWidth;
+                    canvas.drawImage(qrScannerEl, 0, 0, canvasElement.width, canvasElement.height);
+                    
+                    const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+                    
+                    if (code) {
+                        try {
+                            const clientData = JSON.parse(code.data);
+                            setCurrentClient(clientData.id);
+                            closeQRScanner();
+                        } catch (e) {
+                            console.error("Error al procesar código QR: ", e);
+                            showNotification('Código QR inválido', 'error');
+                        }
+                    }
+                }
+                
+                if (scannerModal.style.display !== 'none') {
+                    requestAnimationFrame(tick);
+                }
+            }
+        }
+        
+        function closeQRScanner() {
+            scannerModal.style.display = 'none';
+            if (scannerStream) {
+                scannerStream.getTracks().forEach(track => track.stop());
+                scannerStream = null;
+            }
+        }
+        
+        async function openClientsModal() {
+            clientsModal.style.display = 'flex';
+            await loadClientsTable();
+        }
+        
+        function closeClientsModalFunc() {
+            clientsModal.style.display = 'none';
+        }
+        
+        async function loadClientsTable() {
+            clientsLoadingEl.style.display = 'block';
+            clientsTableEl.style.display = 'none';
+            
+            try {
+                const result = await getAllClients();
+                
+                if (result.success) {
+                    const clients = result.clients;
+                    clientsTableBody.innerHTML = '';
+                    
+                    if (clients.length === 0) {
+                        clientsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay clientes registrados</td></tr>';
+                    } else {
+                        clients.forEach(client => {
+                            const row = document.createElement('tr');
+                            
+                            row.innerHTML = `
+                                <td>${client.name}</td>
+                                <td>${client.phone}</td>
+                                <td>${client.email}</td>
+                                <td>${client.points}</td>
+                                <td>
+                                    <button class="edit-btn" data-id="${client.id}">Editar</button>
+                                    <button class="delete-btn" data-id="${client.id}">Eliminar</button>
+                                </td>
+                            `;
+                            
+                            clientsTableBody.appendChild(row);
+                        });
+                    }
+                    
+                    clientsLoadingEl.style.display = 'none';
+                    clientsTableEl.style.display = 'table';
+                    
+                    // Agregar event listeners a los botones de editar y eliminar
+                    document.querySelectorAll('.edit-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const clientId = this.dataset.id;
+                            editClient(clientId, clients);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const clientId = this.dataset.id;
+                            deleteClient(clientId);
+                        });
+                    });
+                }
+            } catch (error) {
+                showNotification('Error al cargar clientes: ' + error.message, 'error');
+                clientsLoadingEl.style.display = 'none';
+            }
+        }
+        
+        function editClient(clientId, clients) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            // Crear formulario de edición
+            const row = document.querySelector(`button[data-id="${clientId}"]`).closest('tr');
+            let editForm = row.querySelector('.edit-form');
+            
+            if (editForm) {
+                editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+                return;
+            }
+            
+            editForm = document.createElement('div');
+            editForm.className = 'edit-form';
+            editForm.innerHTML = `
+                <h4>Editar Cliente</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label>Nombre:</label>
+                        <input type="text" value="${client.name}" id="editName-${clientId}">
+                    </div>
+                    <div>
+                        <label>Teléfono:</label>
+                        <input type="tel" value="${client.phone}" id="editPhone-${clientId}">
+                    </div>
+                    <div>
+                        <label>Correo:</label>
+                        <input type="email" value="${client.email}" id="editEmail-${clientId}">
+                    </div>
+                    <div>
+                        <label>Puntos:</label>
+                        <input type="number" value="${client.points}" id="editPoints-${clientId}">
+                    </div>
+                </div>
+                <button class="save-edit-btn" data-id="${clientId}">Guardar Cambios</button>
+            `;
+            
+            row.appendChild(editForm);
+            
+            // Event listener para guardar cambios
+            editForm.querySelector('.save-edit-btn').addEventListener('click', function() {
+                saveClientEdit(clientId);
+            });
+        }
+        
+        async function saveClientEdit(clientId) {
+            try {
+                const name = document.getElementById(`editName-${clientId}`).value;
+                const phone = document.getElementById(`editPhone-${clientId}`).value;
+                const email = document.getElementById(`editEmail-${clientId}`).value;
+                const points = parseInt(document.getElementById(`editPoints-${clientId}`).value) || 0;
+                
+                const result = await callNetlifyFunction('update-client', {
+                    clientId: clientId,
+                    updates: {
+                        name: name,
+                        phone: phone,
+                        email: email,
+                        points: points
+                    }
+                });
+                
+                if (result.success) {
+                    // Si este es el cliente actual, actualizar la información mostrada
+                    if (currentClient && currentClient.id === clientId) {
+                        setCurrentClient(clientId);
+                    }
+                    
+                    await loadClientsTable();
+                    showNotification('Cliente actualizado correctamente');
+                }
+            } catch (error) {
+                showNotification('Error al actualizar cliente: ' + error.message, 'error');
+            }
+        }
+        
+        async function deleteClient(clientId) {
+            if (!confirm('¿Estás seguro de que deseas eliminar este cliente?')) return;
+            
+            try {
+                // En este caso, necesitaríamos una función delete-client
+                // Por ahora, establecemos puntos a 0 como "eliminación"
+                const result = await callNetlifyFunction('update-client', {
+                    clientId: clientId,
+                    updates: {
+                        points: 0,
+                        name: 'CLIENTE ELIMINADO',
+                        phone: '',
+                        email: ''
+                    }
+                });
+                
+                if (result.success) {
+                    // Si este es el cliente actual, limpiar
+                    if (currentClient && currentClient.id === clientId) {
+                        clearClient();
+                    }
+                    
+                    await loadClientsTable();
+                    showNotification('Cliente eliminado correctamente');
+                }
+            } catch (error) {
+                showNotification('Error al eliminar cliente: ' + error.message, 'error');
+            }
+        }
+        
+        async function setCurrentClient(clientId) {
+            clientLoadingEl.style.display = 'block';
+            clientInfoEl.style.display = 'none';
+            
+            try {
+                const result = await callNetlifyFunction('get-client', {
+                    clientId: clientId
+                });
+                
+                if (result.success) {
+                    currentClient = result.client;
+                    
+                    // Mostrar información del cliente
+                    clientNameEl.textContent = currentClient.name;
+                    clientPhoneEl.textContent = `Tel: ${currentClient.phone}`;
+                    clientEmailEl.textContent = `Email: ${currentClient.email}`;
+                    clientPointsEl.textContent = `Puntos acumulados: ${currentClient.points}`;
+                    
+                    clientLoadingEl.style.display = 'none';
+                    clientInfoEl.style.display = 'block';
+                    showNotification(`Cliente ${currentClient.name} identificado`);
+                    
+                    // Actualizar el pedido para mostrar posibles descuentos
+                    updateOrderDisplay();
+                }
+            } catch (error) {
+                showNotification('Error al cargar cliente: ' + error.message, 'error');
+                clientLoadingEl.style.display = 'none';
+            }
+        }
+        
+        async function searchClientByPhone() {
+            const phone = phoneSearchEl.value.trim();
+            if (!phone) {
+                showNotification('Ingresa un número de teléfono', 'error');
+                return;
+            }
+            
+            clientLoadingEl.style.display = 'block';
+            clientInfoEl.style.display = 'none';
+            
+            try {
+                const result = await callNetlifyFunction('get-client', {
+                    phone: phone
+                });
+                
+                if (result.success) {
+                    currentClient = result.client;
+                    
+                    // Mostrar información del cliente
+                    clientNameEl.textContent = currentClient.name;
+                    clientPhoneEl.textContent = `Tel: ${currentClient.phone}`;
+                    clientEmailEl.textContent = `Email: ${currentClient.email}`;
+                    clientPointsEl.textContent = `Puntos acumulados: ${currentClient.points}`;
+                    
+                    clientLoadingEl.style.display = 'none';
+                    clientInfoEl.style.display = 'block';
+                    phoneSearchEl.value = '';
+                    
+                    showNotification(`Cliente ${currentClient.name} identificado`);
+                    
+                    // Actualizar el pedido para mostrar posibles descuentos
+                    updateOrderDisplay();
+                }
+            } catch (error) {
+                showNotification('No se encontró un cliente con ese teléfono', 'error');
+                clientLoadingEl.style.display = 'none';
+            }
+        }
+        
+        function usePoints() {
+            if (!currentClient) return;
+            
+            const subtotal = calculateOrderTotal();
+            const maxPointsToUse = Math.min(currentClient.points, subtotal);
+            
+            if (maxPointsToUse <= 0) {
+                showNotification('No hay puntos suficientes para usar', 'error');
+                return;
+            }
+            
+            const pointsInput = prompt(`Tienes ${currentClient.points} puntos disponibles. ¿Cuántos puntos deseas usar? (Máximo: ${maxPointsToUse})`, maxPointsToUse);
+            
+            if (pointsInput === null) return;
+            
+            pointsToUse = parseInt(pointsInput) || 0;
+            
+            if (pointsToUse <= 0 || pointsToUse > maxPointsToUse) {
+                showNotification('Cantidad de puntos inválida', 'error');
+                pointsToUse = 0;
+                return;
+            }
+            
+            // Actualizar la sección de descuento
+            discountAmountEl.textContent = `Descuento por puntos: -$${pointsToUse.toFixed(2)}`;
+            discountSection.style.display = 'block';
+            
+            // Actualizar el pedido
+            updateOrderDisplay();
+            
+            showNotification(`${pointsToUse} puntos aplicados al pedido`);
+        }
+        
+        function clearClient() {
+            currentClient = null;
+            pointsToUse = 0;
+            clientInfoEl.style.display = 'none';
+            discountSection.style.display = 'none';
+            updateOrderDisplay();
+            showNotification('Cliente eliminado del pedido');
+        }
+        
+        function calculateOrderTotal() {
+            let total = 0;
+            
+            currentOrder.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            
+            return total;
+        }
+        
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'success') {
+            notificationEl.textContent = message;
+            notificationEl.className = 'notification';
+            
+            if (type === 'error') {
+                notificationEl.style.backgroundColor = '#dc2626';
+                notificationEl.classList.add('error');
+            } else {
+                notificationEl.style.backgroundColor = '#3b82f6';
+                notificationEl.classList.add('success');
+            }
+            
+            notificationEl.classList.add('show');
+            
+            setTimeout(() => {
+                notificationEl.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

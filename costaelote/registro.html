@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cliente - Elotes y Ceviche</title>
+    <style>
+        :root {
+            --azul-oscuro: #1e3a8a;
+            --azul-medio: #3b82f6;
+            --azul-claro: #dbeafe;
+            --blanco: #ffffff;
+            --amarillo: #fbbf24;
+            --gris: #f3f4f6;
+            --gris-oscuro: #6b7280;
+            --verde: #10b981;
+            --rojo: #dc2626;
+            --naranja: #f97316;
+            --morado: #8b5cf6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gris);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: var(--blanco);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-medio));
+            color: var(--blanco);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--azul-oscuro);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--azul-medio);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .btn {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #f59e0b;
+        }
+        
+        .btn:disabled {
+            background-color: var(--gris);
+            color: var(--gris-oscuro);
+            cursor: not-allowed;
+        }
+        
+        .qr-container {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px dashed var(--azul-claro);
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .qr-code {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+        
+        .download-btn {
+            background-color: var(--verde);
+            color: white;
+            margin-top: 15px;
+        }
+        
+        .download-btn:hover {
+            background-color: #059669;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--azul-medio);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background-color: var(--rojo);
+        }
+        
+        .notification.success {
+            background-color: var(--verde);
+        }
+        
+        .instructions {
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .instructions h3 {
+            color: var(--azul-oscuro);
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid var(--azul-claro);
+            border-left: 4px solid var(--azul-medio);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success-message {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .client-info {
+            background-color: var(--azul-claro);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .client-detail {
+            margin-bottom: 8px;
+        }
+        
+        .client-detail strong {
+            color: var(--azul-oscuro);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Elotes y Ceviche</h1>
+            <p class="subtitle">Registro de Cliente</p>
+        </header>
+        
+        <form id="clientForm">
+            <div class="form-group">
+                <label for="name">Nombre completo *</label>
+                <input type="text" id="name" required placeholder="Ingresa tu nombre completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Teléfono *</label>
+                <input type="tel" id="phone" required placeholder="Ingresa tu número de teléfono">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Correo electrónico *</label>
+                <input type="email" id="email" required placeholder="Ingresa tu correo electrónico">
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">Registrar y Generar Código QR</button>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Registrando cliente y generando código QR...</p>
+            </div>
+        </form>
+        
+        <div class="qr-container" id="qrContainer">
+            <div class="success-message">
+                <h2>¡Registro Exitoso!</h2>
+                <p>Tu código QR personal ha sido generado correctamente.</p>
+            </div>
+            
+            <div class="client-info" id="clientInfo">
+                <h3>Información del Cliente</h3>
+                <div class="client-detail"><strong>Nombre:</strong> <span id="clientName"></span></div>
+                <div class="client-detail"><strong>Teléfono:</strong> <span id="clientPhone"></span></div>
+                <div class="client-detail"><strong>Correo:</strong> <span id="clientEmail"></span></div>
+                <div class="client-detail"><strong>Puntos iniciales:</strong> <span id="clientPoints">0</span></div>
+            </div>
+            
+            <p>Guarda este código QR para acumular puntos en tus compras</p>
+            <div class="qr-code" id="qrCode"></div>
+            <button class="btn download-btn" id="downloadBtn">Descargar Código QR</button>
+            
+            <div class="instructions">
+                <h3>¿Cómo usar tu código QR?</h3>
+                <ul>
+                    <li><strong>Guarda este código QR</strong> en tu teléfono (toma screenshot o descárgalo)</li>
+                    <li><strong>Muéstralo al pagar</strong> en Elotes y Ceviche</li>
+                    <li><strong>Acumularás el 5%</strong> de tus compras en puntos</li>
+                    <li><strong>Canjea tus puntos</strong> por descuentos en futuras compras</li>
+                    <li>Si pierdes tu QR, puedes identificarte con tu número de teléfono</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" id="newRegisterBtn" style="background-color: var(--morado);">Registrar Otro Cliente</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <!-- Incluir la biblioteca QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        // Elementos DOM
+        const clientForm = document.getElementById('clientForm');
+        const qrContainer = document.getElementById('qrContainer');
+        const qrCodeEl = document.getElementById('qrCode');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const notificationEl = document.getElementById('notification');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingEl = document.getElementById('loading');
+        const newRegisterBtn = document.getElementById('newRegisterBtn');
+        const clientNameEl = document.getElementById('clientName');
+        const clientPhoneEl = document.getElementById('clientPhone');
+        const clientEmailEl = document.getElementById('clientEmail');
+        const clientPointsEl = document.getElementById('clientPoints');
+        
+        let qrCodeInstance = null;
+        let currentClientData = null;
+
+        // Función para llamar a Netlify Functions
+        async function callNetlifyFunction(functionName, data) {
+            try {
+                const response = await fetch(`/.netlify/functions/${functionName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Error en la llamada a Netlify Function:', error);
+                throw new Error('Error de conexión con el servidor. Verifica tu conexión a internet.');
+            }
+        }
+
+        // Validar formulario
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!name) {
+                showNotification('Por favor ingresa tu nombre completo', 'error');
+                return false;
+            }
+            
+            if (!phone) {
+                showNotification('Por favor ingresa tu número de teléfono', 'error');
+                return false;
+            }
+            
+            // Validar formato de teléfono (mínimo 10 dígitos)
+            const phoneRegex = /^[0-9]{10,}$/;
+            if (!phoneRegex.test(phone.replace(/\D/g, ''))) {
+                showNotification('Por favor ingresa un número de teléfono válido (mínimo 10 dígitos)', 'error');
+                return false;
+            }
+            
+            if (!email) {
+                showNotification('Por favor ingresa tu correo electrónico', 'error');
+                return false;
+            }
+            
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Por favor ingresa un correo electrónico válido', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            notificationEl.textContent = message;
+            notificationEl.className = 'notification';
+            
+            if (type === 'error') {
+                notificationEl.style.backgroundColor = '#dc2626';
+                notificationEl.classList.add('error');
+            } else {
+                notificationEl.style.backgroundColor = '#3b82f6';
+                notificationEl.classList.add('success');
+            }
+            
+            notificationEl.classList.add('show');
+            
+            setTimeout(() => {
+                notificationEl.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Generar código QR
+        function generateQRCode(data) {
+            return new Promise((resolve, reject) => {
+                try {
+                    // Limpiar contenedor
+                    qrCodeEl.innerHTML = '';
+                    
+                    // Crear un nuevo div para el QR
+                    const qrDiv = document.createElement('div');
+                    qrDiv.id = 'qrCodeContainer';
+                    qrCodeEl.appendChild(qrDiv);
+                    
+                    // Generar QR usando la biblioteca
+                    qrCodeInstance = new QRCode(qrDiv, {
+                        text: JSON.stringify(data),
+                        width: 200,
+                        height: 200,
+                        colorDark: '#1e3a8a',
+                        colorLight: '#ffffff',
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    
+                    // Esperar a que se genere el QR
+                    setTimeout(() => {
+                        resolve();
+                    }, 100);
+                    
+                } catch (error) {
+                    reject(new Error('Error al generar el código QR: ' + error.message));
+                }
+            });
+        }
+        
+        // Descargar código QR
+        function downloadQRCode() {
+            const canvas = qrCodeEl.querySelector('canvas');
+            if (!canvas) {
+                showNotification('Primero genera un código QR', 'error');
+                return;
+            }
+            
+            try {
+                const link = document.createElement('a');
+                const clientName = currentClientData ? currentClientData.name.replace(/\s+/g, '_') : 'cliente';
+                link.download = `codigo_qr_${clientName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showNotification('Código QR descargado correctamente');
+            } catch (error) {
+                console.error('Error al descargar QR:', error);
+                showNotification('Error al descargar el código QR', 'error');
+            }
+        }
+        
+        // Limpiar formulario para nuevo registro
+        function resetForm() {
+            clientForm.reset();
+            qrContainer.style.display = 'none';
+            clientForm.style.display = 'block';
+            currentClientData = null;
+            
+            // Limpiar estilos de los inputs
+            document.querySelectorAll('input').forEach(input => {
+                input.style.borderColor = '#ddd';
+            });
+        }
+        
+        // Manejar envío del formulario
+        clientForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validar formulario
+            if (!validateForm()) {
+                return;
+            }
+            
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            // Mostrar loading
+            submitBtn.disabled = true;
+            loadingEl.style.display = 'block';
+
+            try {
+                // Registrar cliente en la base de datos
+                const result = await callNetlifyFunction('register-client', {
+                    name: name,
+                    phone: phone,
+                    email: email
+                });
+
+                if (result.success) {
+                    currentClientData = result.client;
+                    
+                    // Mostrar información del cliente
+                    clientNameEl.textContent = currentClientData.name;
+                    clientPhoneEl.textContent = currentClientData.phone;
+                    clientEmailEl.textContent = currentClientData.email;
+                    clientPointsEl.textContent = currentClientData.points;
+                    
+                    // Generar código QR con los datos del cliente
+                    await generateQRCode({
+                        id: currentClientData.id,
+                        name: currentClientData.name,
+                        phone: currentClientData.phone
+                    });
+                    
+                    // Ocultar formulario y mostrar resultados
+                    clientForm.style.display = 'none';
+                    qrContainer.style.display = 'block';
+                    loadingEl.style.display = 'none';
+                    
+                    showNotification('¡Cliente registrado exitosamente!');
+                    
+                    // Desplazar hacia el código QR
+                    qrContainer.scrollIntoView({ behavior: 'smooth' });
+                    
+                } else if (result.error === 'Cliente ya existe') {
+                    // Cliente ya existe, preguntar si quiere regenerar QR
+                    const regenerate = confirm(`El cliente ${result.client.name} ya está registrado. ¿Deseas generar un nuevo código QR?`);
+                    
+                    if (regenerate) {
+                        currentClientData = result.client;
+                        
+                        // Mostrar información del cliente
+                        clientNameEl.textContent = currentClientData.name;
+                        clientPhoneEl.textContent = currentClientData.phone;
+                        clientEmailEl.textContent = currentClientData.email;
+                        clientPointsEl.textContent = currentClientData.points;
+                        
+                        // Generar código QR
+                        await generateQRCode({
+                            id: currentClientData.id,
+                            name: currentClientData.name,
+                            phone: currentClientData.phone
+                        });
+                        
+                        // Ocultar formulario y mostrar resultados
+                        clientForm.style.display = 'none';
+                        qrContainer.style.display = 'block';
+                        loadingEl.style.display = 'none';
+                        
+                        showNotification('Código QR regenerado para cliente existente');
+                        
+                        // Desplazar hacia el código QR
+                        qrContainer.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        loadingEl.style.display = 'none';
+                        submitBtn.disabled = false;
+                    }
+                } else {
+                    throw new Error(result.error || 'Error desconocido al registrar cliente');
+                }
+                
+            } catch (error) {
+                console.error('Error completo:', error);
+                showNotification('Error al registrar cliente: ' + error.message, 'error');
+                loadingEl.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Evento para descargar QR
+        downloadBtn.addEventListener('click', downloadQRCode);
+        
+        // Evento para nuevo registro
+        newRegisterBtn.addEventListener('click', resetForm);
+        
+        // Mejorar la experiencia del formulario
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.style.borderColor = '#10b981';
+                } else {
+                    this.style.borderColor = '#ddd';
+                }
+            });
+            
+            // Validación en tiempo real para teléfono
+            if (input.id === 'phone') {
+                input.addEventListener('blur', function() {
+                    const phone = this.value.trim().replace(/\D/g, '');
+                    if (phone && phone.length < 10) {
+                        this.style.borderColor = '#dc2626';
+                        showNotification('El número de teléfono debe tener al menos 10 dígitos', 'error');
+                    }
+                });
+            }
+        });
+
+        // Prevenir envío con Enter en campos individuales
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "elotes-ceviche",
+  "version": "1.0.0",
+  "description": "Sistema de ventas para Elotes y Ceviche",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build completo'"
+  },
+  "dependencies": {},
+  "keywords": ["ventas", "elotes", "ceviche", "netlify"],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
